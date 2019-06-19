@@ -52,6 +52,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static io.confluent.examples.streams.interactivequeries.WordCountInteractiveQueriesExample.DEFAULT_HOST;
 import static io.confluent.examples.streams.microservices.util.MicroserviceTestUtils.getWithRetries;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -125,7 +126,7 @@ public class WordCountInteractiveQueriesExampleTest {
   }
   @Test
   public void shouldDemonstrateInteractiveQueries() throws Exception {
-    final String host = ExampleTestUtils.randomValidHost();
+    final String host = DEFAULT_HOST;
     final int port = ExampleTestUtils.randomFreeLocalPort();
     final String baseUrl = "http://" + host + ":" + port + "/state";
 
@@ -239,7 +240,8 @@ public class WordCountInteractiveQueriesExampleTest {
     while (count <= maxTries) {
       try {
         // Starts the Rest Service on the provided host:port
-        proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, port, host);
+        proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, host, port);
+        break;
       } catch (final Exception ex) {
         log.error("Could not start Rest Service due to: " + ex.toString());
       }
@@ -266,7 +268,7 @@ public class WordCountInteractiveQueriesExampleTest {
     });
     
     kafkaStreams.start();
-    proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, port, host);
+    proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, host, port);
   }
   
   @Test
@@ -285,11 +287,11 @@ public class WordCountInteractiveQueriesExampleTest {
     });
     
     kafkaStreams.start();
-    proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, port, host);
+    proxy = WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, host, port);
     expectedEx.expect(Exception.class);
     expectedEx.expectCause(IsInstanceOf.instanceOf(java.net.BindException.class));
     // Binding to same port again will raise BindException.
-    WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, port, host);
+    WordCountInteractiveQueriesExample.startRestProxy(kafkaStreams, host, port);
   }
 
   /**
