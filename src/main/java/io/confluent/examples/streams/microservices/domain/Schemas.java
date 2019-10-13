@@ -93,6 +93,9 @@ public class Schemas {
   }
 
   private static void configure(final Serde<?> serde, final String url) {
+    //here we only registry schema classes as value. we do not use schema for key. because key does not need schema in this example
+    // that is why for WAREHOUSE_INVENTORY, we created our own Serde class for key productType: ProductTypeSerde
+    // for other value as schema registry, we only need SpecificAvroSerde and specify below config to url.
     if (serde instanceof SpecificAvroSerde) {
       serde.configure(Collections.singletonMap(SCHEMA_REGISTRY_URL_CONFIG, url), false);
     }

@@ -64,6 +64,9 @@ public class FraudService implements Service {
     });
     streams.start();
 
+    // use this latch to wait 60s for stream to start. when call streams.start(), it will trigger all other internal
+    // threads. U have created a setStateListener to monitor the whole stream state. if the new state is running (which means
+    // all stream internal setup is done, then stream create is success. Then here the check will pass)
     try {
       if (!startLatch.await(60, TimeUnit.SECONDS)) {
         throw new RuntimeException("Streams never finished rebalancing on startup");
@@ -120,6 +123,8 @@ public class FraudService implements Service {
     //as caching in Kafka Streams will conflate subsequent updates for the same key. Disabling caching ensures
     //we get a complete "changelog" from the aggregate(...) step above (i.e. every input event will have a
     //corresponding output event.
+    //Typically, you should only disable record caches for testing or debugging purposes
+    //https://docs.confluent.io/current/streams/developer-guide/dsl-api.html#aggregating  Note
     final Properties props = baseStreamsConfig(bootstrapServers, stateDir, SERVICE_APP_ID);
     props.setProperty(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
 

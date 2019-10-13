@@ -88,7 +88,7 @@ public class EmailService implements Service {
         .with(ORDERS.keySerde(), ORDERS.valueSerde(), PAYMENTS.valueSerde());
 
     //Join the two streams and the table then send an email for each
-    orders.join(payments, EmailTuple::new,
+    orders.join(payments, EmailTuple::new, // equals to (order, payment) -> new EmailTuple(order, payment)
         //Join Orders and Payments streams
         JoinWindows.of(Duration.ofMinutes(1)), serdes)
         //Next join to the GKTable of Customers
