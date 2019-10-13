@@ -95,6 +95,8 @@ public class InventoryService implements Service {
         .with(Topics.WAREHOUSE_INVENTORY.keySerde(), Topics.WAREHOUSE_INVENTORY.valueSerde()));
 
     //Create a store to reserve inventory whilst the order is processed.
+    // this store is backed up by changelog. Also has check point on local volume
+    // you can also setup standby replica
     final StoreBuilder reservedStock = Stores
       .keyValueStoreBuilder(Stores.persistentKeyValueStore(RESERVED_STOCK_STORE_NAME),
         Topics.WAREHOUSE_INVENTORY.keySerde(), Serdes.Long())
